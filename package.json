@@ -1,0 +1,21 @@
+{
+  "name": "swasthya-youth",
+  "version": "1.0.0",
+  "description": "National Digital Health Ecosystem for Indian Youth",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.18.1",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.6.0",
+    "canvas": "^3.2.3",
+    "cheerio": "^1.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "puppeteer": "^25.2.1"
+  }
+}

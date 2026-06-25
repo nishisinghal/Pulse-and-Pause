@@ -1,0 +1,43 @@
+{
+  "name": "Pulse & Pause",
+  "short_name": "Pulse & Pause",
+  "description": "Your daily health companion — track movement, sleep, nutrition & mood.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f121c",
+  "theme_color": "#111827",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/#/dashboard",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Log Movement",
+      "url": "/#/movement",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Log Sleep",
+      "url": "/#/sleep",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

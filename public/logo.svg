@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" fill="none">
+  <defs>
+    <linearGradient id="pulse-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b8a"/>
+      <stop offset="50%" stop-color="#e84393"/>
+      <stop offset="100%" stop-color="#74b9ff"/>
+    </linearGradient>
+    <linearGradient id="circle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e84393"/>
+      <stop offset="40%" stop-color="#a29bfe"/>
+      <stop offset="100%" stop-color="#74b9ff"/>
+    </linearGradient>
+  </defs>
+  <!-- Pulse/heartbeat line -->
+  <polyline points="10,65 25,65 35,65 45,50 55,80 65,30 75,90 85,45 95,65 105,65"
+    stroke="url(#pulse-grad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Circular P -->
+  <path d="M130,25 A35,35 0 1,1 130,95" stroke="url(#circle-grad)" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <path d="M130,95 A35,35 0 0,1 130,25" stroke="url(#circle-grad)" stroke-width="5" stroke-linecap="round" fill="none" stroke-dasharray="110" stroke-dashoffset="20"/>
+  <!-- Inner P shape -->
+  <path d="M125,40 L125,80 M125,40 C125,40 150,38 150,52 C150,66 125,64 125,64"
+    stroke="url(#pulse-grad)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Connecting line from pulse to circle -->
+  <line x1="105" y1="65" x2="115" y2="60" stroke="url(#pulse-grad)" stroke-width="4" stroke-linecap="round"/>
+</svg>

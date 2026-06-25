@@ -1,0 +1,4 @@
+node_modules
+.env
+swasthya.db
+.DS_Store
