@@ -47,7 +47,8 @@ router.post('/signup', async (req, res) => {
 
     res.status(201).json({ token, user: { id: user.id, name, email, age, gender, country } });
   } catch (err) {
-    res.status(500).json({ error: 'Server error during signup.' });
+    console.error('Signup error:', err);
+    res.status(500).json({ error: `Server error: ${err.message}` });
   }
 });
 
@@ -76,7 +77,8 @@ router.post('/login', async (req, res) => {
 
     res.json({ token, user: { id: user.id, name: user.name, email: user.email, age, gender: user.gender, country: user.country } });
   } catch (err) {
-    res.status(500).json({ error: 'Server error during login.' });
+    console.error('Login error:', err);
+    res.status(500).json({ error: `Server error: ${err.message}` });
   }
 });
 
