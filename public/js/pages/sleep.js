@@ -21,14 +21,14 @@ window.SleepPage = (() => {
                 <label class="form-label block text-center" style="font-size: 10px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary);">${t('sleep.bedtime')}</label>
                 <div class="flex items-center justify-center gap-1">
                   <span style="font-size: 1.1rem;">🌙</span>
-                  <input type="time" id="sl-bedtime" value="23:00" style="background:transparent; border:none; box-shadow:none; padding:0; font-size:1.1rem; font-weight:700; outline:none; text-align:center; color: var(--text-primary); width: 100px;">
+                  <input type="time" id="sl-bedtime" value="23:00" style="background:transparent; border:none; box-shadow:none; padding:0; font-size:1.1rem; font-weight:700; outline:none; text-align:center; color: var(--text-primary); width: 100%;">
                 </div>
               </div>
               <div class="flex-1" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 0.75rem 0.5rem; transition: all 0.2s ease;">
                 <label class="form-label block text-center" style="font-size: 10px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary);">${t('sleep.wakeTime')}</label>
                 <div class="flex items-center justify-center gap-1">
                   <span style="font-size: 1.1rem;">☀️</span>
-                  <input type="time" id="sl-wake" value="07:00" style="background:transparent; border:none; box-shadow:none; padding:0; font-size:1.1rem; font-weight:700; outline:none; text-align:center; color: var(--text-primary); width: 100px;">
+                  <input type="time" id="sl-wake" value="07:00" style="background:transparent; border:none; box-shadow:none; padding:0; font-size:1.1rem; font-weight:700; outline:none; text-align:center; color: var(--text-primary); width: 100%;">
                 </div>
               </div>
             </div>
