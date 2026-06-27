@@ -16,7 +16,8 @@ function calculateAge(dob) {
 // POST /api/auth/signup
 router.post('/signup', async (req, res) => {
   try {
-    const { name, email, password, dob, gender, country } = req.body;
+    let { name, email, password, dob, gender, country } = req.body;
+    if (email) email = email.toLowerCase().trim();
 
     if (!name || !email || !password || !dob || !gender || !country) {
       return res.status(400).json({ error: 'All fields are required.' });
@@ -53,7 +54,8 @@ router.post('/signup', async (req, res) => {
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    if (email) email = email.toLowerCase().trim();
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required.' });

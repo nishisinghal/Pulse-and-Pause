@@ -13,6 +13,10 @@ window.API = (() => {
       const res = await fetch(BASE + endpoint, { ...options, headers });
       const data = await res.json();
       if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem('swasthya_token');
+          window.location.hash = '#/login';
+        }
         const msg = data.error || 'Request failed';
         Helpers.showToast(msg, 'error');
         throw new Error(msg);
