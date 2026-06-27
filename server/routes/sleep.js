@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const db = require('../db');
+const prisma = require('../prisma');
 const { authMiddleware } = require('../middleware/auth');
 
 router.use(authMiddleware);
@@ -15,23 +15,30 @@ function calcDuration(bedtime, wakeTime) {
 }
 
 // POST /api/sleep
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { bedtime, wake_time, quality = 3 } = req.body;
     const date = new Date().toISOString().split('T')[0];
     const duration_hours = calcDuration(bedtime, wake_time);
 
-    db.prepare(`
-      INSERT INTO sleep_logs (user_id, date, bedtime, wake_time, duration_hours, quality)
-      VALUES (?, ?, ?, ?, ?, ?)
-      ON CONFLICT(user_id, date) DO UPDATE SET
-        bedtime = excluded.bedtime,
-        wake_time = excluded.wake_time,
-        duration_hours = excluded.duration_hours,
-        quality = excluded.quality
-    `).run(req.user.id, date, bedtime, wake_time, duration_hours, quality);
+    const log = await prisma.sleepLog.upsert({
+      where: {
+        user_id_date: {
+          user_id: Number(req.user.id),
+          date: date,
+        }
+      },
+      update: { bedtime, wake_time, duration_hours, quality },
+      create: {
+        user_id: Number(req.user.id),
+        date: date,
+        bedtime,
+        wake_time,
+        duration_hours,
+        quality,
+      }
+    });
 
-    const log = db.prepare('SELECT * FROM sleep_logs WHERE user_id = ? AND date = ?').get(req.user.id, date);
     res.json(log);
   } catch (err) {
     res.status(500).json({ error: 'Failed to log sleep.' });
@@ -39,7 +46,7 @@ router.post('/', (req, res) => {
 });
 
 // GET /api/sleep?range=week|month
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const range = req.query.range || 'week';
     const days = range === 'month' ? 30 : 7;
@@ -47,9 +54,13 @@ router.get('/', (req, res) => {
     startDate.setDate(startDate.getDate() - days + 1);
     const start = startDate.toISOString().split('T')[0];
 
-    const logs = db.prepare(
-      'SELECT * FROM sleep_logs WHERE user_id = ? AND date >= ? ORDER BY date ASC'
-    ).all(req.user.id, start);
+    const logs = await prisma.sleepLog.findMany({
+      where: {
+        user_id: Number(req.user.id),
+        date: { gte: start }
+      },
+      orderBy: { date: 'asc' }
+    });
 
     res.json(logs);
   } catch (err) {

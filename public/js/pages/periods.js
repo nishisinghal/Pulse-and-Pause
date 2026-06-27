@@ -10,7 +10,7 @@ window.PeriodsPage = (function() {
           <h2 class="text-xl font-bold">${t('periods.title')}</h2>
         </div>
 
-        <div class="glass-card animate-slide-up stagger-1">
+        <div class="glass-card period-tracker-card animate-slide-up stagger-1">
           <div class="calendar-header">
             <button class="calendar-nav-btn" id="cal-prev">❮</button>
             <div class="calendar-month-year" id="cal-month-year"></div>

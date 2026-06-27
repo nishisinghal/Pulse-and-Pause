@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const db = require('../db');
+const prisma = require('../prisma');
 const { authMiddleware } = require('../middleware/auth');
 
 router.use(authMiddleware);
@@ -9,17 +9,20 @@ function getQuota(gender) {
 }
 
 // POST /api/restdays — mark today as rest day
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const date = new Date().toISOString().split('T')[0];
     const month = date.substring(0, 7); // YYYY-MM
 
-    const user = db.prepare('SELECT gender FROM users WHERE id = ?').get(req.user.id);
+    const user = await prisma.user.findUnique({
+      where: { id: Number(req.user.id) },
+      select: { gender: true }
+    });
     const quota = getQuota(user.gender);
 
-    const usedCount = db.prepare(
-      'SELECT COUNT(*) as count FROM rest_days WHERE user_id = ? AND month = ?'
-    ).get(req.user.id, month).count;
+    const usedCount = await prisma.restDay.count({
+      where: { user_id: Number(req.user.id), month }
+    });
 
     if (usedCount >= quota) {
       return res.status(400).json({
@@ -29,13 +32,21 @@ router.post('/', (req, res) => {
       });
     }
 
-    db.prepare(`
-      INSERT OR IGNORE INTO rest_days (user_id, date, month) VALUES (?, ?, ?)
-    `).run(req.user.id, date, month);
+    await prisma.restDay.upsert({
+      where: {
+        user_id_date: { user_id: Number(req.user.id), date }
+      },
+      update: {},
+      create: {
+        user_id: Number(req.user.id),
+        date,
+        month
+      }
+    });
 
-    const newUsed = db.prepare(
-      'SELECT COUNT(*) as count FROM rest_days WHERE user_id = ? AND month = ?'
-    ).get(req.user.id, month).count;
+    const newUsed = await prisma.restDay.count({
+      where: { user_id: Number(req.user.id), month }
+    });
 
     res.json({ date, remaining: quota - newUsed, total: quota, used: newUsed });
   } catch (err) {
@@ -44,9 +55,14 @@ router.post('/', (req, res) => {
 });
 
 // DELETE /api/restdays/:date — unmark rest day
-router.delete('/:date', (req, res) => {
+router.delete('/:date', async (req, res) => {
   try {
-    db.prepare('DELETE FROM rest_days WHERE user_id = ? AND date = ?').run(req.user.id, req.params.date);
+    await prisma.restDay.deleteMany({
+      where: {
+        user_id: Number(req.user.id),
+        date: req.params.date
+      }
+    });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Failed to unmark rest day.' });
@@ -54,16 +70,20 @@ router.delete('/:date', (req, res) => {
 });
 
 // GET /api/restdays?month=YYYY-MM
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const month = req.query.month || new Date().toISOString().substring(0, 7);
 
-    const user = db.prepare('SELECT gender FROM users WHERE id = ?').get(req.user.id);
+    const user = await prisma.user.findUnique({
+      where: { id: Number(req.user.id) },
+      select: { gender: true }
+    });
     const quota = getQuota(user.gender);
 
-    const days = db.prepare(
-      'SELECT * FROM rest_days WHERE user_id = ? AND month = ? ORDER BY date ASC'
-    ).all(req.user.id, month);
+    const days = await prisma.restDay.findMany({
+      where: { user_id: Number(req.user.id), month },
+      orderBy: { date: 'asc' }
+    });
 
     res.json({ days, used: days.length, remaining: quota - days.length, total: quota });
   } catch (err) {

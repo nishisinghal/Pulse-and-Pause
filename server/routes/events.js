@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const db = require('../db');
+const prisma = require('../prisma');
 const { authMiddleware } = require('../middleware/auth');
 
 router.use(authMiddleware);
@@ -179,16 +179,27 @@ router.get('/', (req, res) => {
 });
 
 // POST /api/events/:id/register
-router.post('/:id/register', (req, res) => {
+router.post('/:id/register', async (req, res) => {
   try {
     const eventId = req.params.id;
     // Check if event exists
     const eventExists = SMART_EVENTS.some(e => e.id === eventId);
     if (!eventExists) return res.status(404).json({ error: 'Event not found.' });
 
-    db.prepare(`
-      INSERT OR IGNORE INTO event_registrations (user_id, event_id) VALUES (?, ?)
-    `).run(req.user.id, eventId);
+    // Use Prisma upsert or create to avoid duplicates
+    await prisma.eventRegistration.upsert({
+      where: {
+        user_id_event_id: {
+          user_id: Number(req.user.id),
+          event_id: eventId,
+        }
+      },
+      update: {},
+      create: {
+        user_id: Number(req.user.id),
+        event_id: eventId,
+      }
+    });
 
     res.json({ success: true, event_id: eventId });
   } catch (err) {
@@ -197,13 +208,14 @@ router.post('/:id/register', (req, res) => {
 });
 
 // GET /api/events/registered
-router.get('/registered', (req, res) => {
+router.get('/registered', async (req, res) => {
   try {
-    const regs = db.prepare(
-      'SELECT event_id FROM event_registrations WHERE user_id = ?'
-    ).all(req.user.id).map(r => r.event_id);
+    const regs = await prisma.eventRegistration.findMany({
+      where: { user_id: Number(req.user.id) },
+      select: { event_id: true }
+    });
 
-    res.json(regs);
+    res.json(regs.map(r => r.event_id));
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch registered events.' });
   }

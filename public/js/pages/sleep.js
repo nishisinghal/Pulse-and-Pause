@@ -7,7 +7,8 @@ window.SleepPage = (() => {
   function render() {
     const t = I18n.t.bind(I18n);
     return `
-      <div class="tracker-page">
+      <div class="tracker-page" style="position: relative; z-index: 1;">
+        <div class="sleep-header-bg" style="position: absolute; top: -60px; left: -20px; right: -20px; height: 320px; background: url('/img/moon.svg') center/cover; opacity: 0.5; z-index: -1; mask-image: linear-gradient(to bottom, black 30%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%); pointer-events: none;"></div>
         <div class="tracker-header animate-slide-up">
           <span class="tracker-icon">😴</span>
           <h2>${t('sleep.title')}</h2>
@@ -15,14 +16,20 @@ window.SleepPage = (() => {
 
         <div class="glass-card no-hover animate-slide-up stagger-1">
           <div class="tracker-form">
-            <div class="input-row">
-              <div class="form-group">
-                <label class="form-label">${t('sleep.bedtime')}</label>
-                <input type="time" id="sl-bedtime" class="input" value="23:00">
+            <div class="flex gap-2 mb-4">
+              <div class="flex-1" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 0.75rem 0.5rem; transition: all 0.2s ease;">
+                <label class="form-label block text-center" style="font-size: 10px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary);">${t('sleep.bedtime')}</label>
+                <div class="flex items-center justify-center gap-1">
+                  <span style="font-size: 1.1rem;">🌙</span>
+                  <input type="time" id="sl-bedtime" value="23:00" style="background:transparent; border:none; box-shadow:none; padding:0; font-size:1.1rem; font-weight:700; outline:none; text-align:center; color: var(--text-primary); width: 100px;">
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">${t('sleep.wakeTime')}</label>
-                <input type="time" id="sl-wake" class="input" value="07:00">
+              <div class="flex-1" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 0.75rem 0.5rem; transition: all 0.2s ease;">
+                <label class="form-label block text-center" style="font-size: 10px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary);">${t('sleep.wakeTime')}</label>
+                <div class="flex items-center justify-center gap-1">
+                  <span style="font-size: 1.1rem;">☀️</span>
+                  <input type="time" id="sl-wake" value="07:00" style="background:transparent; border:none; box-shadow:none; padding:0; font-size:1.1rem; font-weight:700; outline:none; text-align:center; color: var(--text-primary); width: 100px;">
+                </div>
               </div>
             </div>
             <div class="form-group">

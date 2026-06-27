@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               Int                   @id @default(autoincrement())
+  name             String
+  email            String                @unique
+  password_hash    String
+  dob              String
+  gender           String
+  country          String                @default("IN")
+  language         String                @default("en")
+  activity_level   String                @default("moderate")
+  created_at       DateTime              @default(now())
+  
+  movement_logs    MovementLog[]
+  sleep_logs       SleepLog[]
+  nutrition_logs   NutritionLog[]
+  period_logs      PeriodLog[]
+  mood_logs        MoodLog[]
+  rest_days        RestDay[]
+  event_regs       EventRegistration[]
+  screen_logs      ScreenTimeLog[]
+
+  @@map("users")
+}
+
+model MovementLog {
+  id               Int      @id @default(autoincrement())
+  user_id          Int
+  date             String
+  steps            Int      @default(0)
+  active_minutes   Int      @default(0)
+  workout_type     String?
+  workout_duration Int      @default(0)
+
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, date])
+  @@map("movement_logs")
+}
+
+model SleepLog {
+  id               Int      @id @default(autoincrement())
+  user_id          Int
+  date             String
+  bedtime          String?
+  wake_time        String?
+  duration_hours   Float?
+  quality          Int?
+
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, date])
+  @@map("sleep_logs")
+}
+
+model NutritionLog {
+  id               Int      @id @default(autoincrement())
+  user_id          Int
+  date             String
+  breakfast        Int      @default(0)
+  lunch            Int      @default(0)
+  snacks           Int      @default(0)
+  dinner           Int      @default(0)
+  breakfast_note   String   @default("")
+  lunch_note       String   @default("")
+  snacks_note      String   @default("")
+  dinner_note      String   @default("")
+  water_glasses    Int      @default(0)
+
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, date])
+  @@map("nutrition_logs")
+}
+
+model PeriodLog {
+  id               Int      @id @default(autoincrement())
+  user_id          Int
+  date             String
+  flow             String?
+
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, date])
+  @@map("period_logs")
+}
+
+model MoodLog {
+  id               Int      @id @default(autoincrement())
+  user_id          Int
+  date             String
+  mood             String?
+  note             String   @default("")
+
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, date])
+  @@map("mood_logs")
+}
+
+model RestDay {
+  id               Int      @id @default(autoincrement())
+  user_id          Int
+  date             String
+  month            String
+
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, date])
+  @@map("rest_days")
+}
+
+model EventRegistration {
+  id               Int      @id @default(autoincrement())
+  user_id          Int
+  event_id         String
+  registered_at    DateTime @default(now())
+
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, event_id])
+  @@map("event_registrations")
+}
+
+model ScreenTimeLog {
+  id               Int      @id @default(autoincrement())
+  user_id          Int
+  date             String
+  total_seconds    Int      @default(0)
+
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, date])
+  @@map("screen_time_logs")
+}

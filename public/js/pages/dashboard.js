@@ -7,94 +7,118 @@ window.DashboardPage = (() => {
   function render() {
     const t = I18n.t.bind(I18n);
     return `
-      <div class="dashboard-page">
-        <div id="install-banner" class="install-banner glass-card animate-slide-up" style="display:none;">
-          <div class="install-banner-content">
-            <span style="font-size:1.5rem;">📲</span>
-            <div style="flex:1;">
-              <div style="font-weight:600;font-size:var(--text-sm);">${t('dashboard.installTitle')}</div>
-              <div style="font-size:var(--text-xs);color:var(--text-secondary);">${t('dashboard.installSub')}</div>
-            </div>
-            <button id="install-now-btn" class="btn btn-primary" style="padding:var(--space-2) var(--space-4);font-size:var(--text-sm);">${t('dashboard.installBtn')}</button>
-            <button id="install-dismiss" style="font-size:var(--text-lg);color:var(--text-tertiary);padding:var(--space-1);">&times;</button>
-          </div>
-        </div>
-
-        <div class="greeting-section animate-slide-up stagger-1" style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="dashboard-page" style="position: relative; z-index: 1;">
+        <div class="dashboard-header-bg" style="position: absolute; top: -60px; left: calc(50% - 50vw); width: 100vw; height: 320px; z-index: -1; pointer-events: none;"></div>
+        
+        <div class="greeting-section animate-slide-up stagger-1 mt-4" style="display:flex; justify-content:space-between; align-items:center;">
           <div>
-            <div class="greeting-text" id="dash-greeting">${t('greeting.' + Helpers.timeGreeting())}</div>
-            <div class="greeting-sub" id="dash-name">${t('dashboard.todayProgress')}</div>
+            <div class="greeting-text" style="font-size: 1rem; color: var(--text-secondary);">${t('greeting.' + Helpers.timeGreeting())},</div>
+            <div class="greeting-sub" style="font-size: 1.8rem; font-weight: 700; color: #FFF; margin-top: 4px;">Nishi 👋</div>
           </div>
-          <div id="dash-avatar" class="avatar" style="width:48px;height:48px;font-size:1.5rem;cursor:pointer;" onclick="location.hash='#/profile'"></div>
-        </div>
-
-        <div class="dashboard-top-row animate-slide-up stagger-2">
-          <div id="streak-display">${Streaks.renderStreakBadge(0)}</div>
-          <div class="completion-ring-wrapper">
-            <div class="completion-ring" id="completion-ring"></div>
-            <div class="completion-label">${t('dashboard.completion')}</div>
+          <div class="completion-ring-wrapper" style="position: relative; width: 80px; height: 80px;">
+            <div class="completion-ring" id="completion-ring" style="width: 80px; height: 80px; filter: drop-shadow(0 0 10px rgba(163, 230, 53, 0.5));"></div>
+            <div class="completion-label" style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: var(--text-secondary); margin-top: 8px; white-space: nowrap;">Day Progress</div>
           </div>
         </div>
 
-        <div class="stats-grid">
-          <div class="stat-card stat-primary animate-slide-up stagger-3" onclick="location.hash='#/movement'">
-            <div class="stat-icon">🏃</div>
-            <div class="stat-value" id="dash-steps">--</div>
-            <div class="stat-label">${t('dashboard.steps')}</div>
-          </div>
-          <div class="stat-card stat-secondary animate-slide-up stagger-4" onclick="location.hash='#/sleep'">
-            <div class="stat-icon">😴</div>
-            <div class="stat-value" id="dash-sleep">--</div>
-            <div class="stat-label">${t('dashboard.sleepHours')}</div>
-          </div>
-          <div class="stat-card stat-accent animate-slide-up stagger-5" onclick="location.hash='#/nutrition'">
-            <div class="stat-icon">🥗</div>
-            <div class="stat-value" id="dash-meals">--</div>
-            <div class="stat-label">${t('dashboard.mealsLogged')}</div>
-          </div>
-          <div class="stat-card stat-danger animate-slide-up stagger-6" onclick="location.hash='#/mood'">
-            <div class="stat-icon">😊</div>
-            <div class="stat-value" id="dash-mood">--</div>
-            <div class="stat-label">${t('dashboard.mood')}</div>
+        <div class="dashboard-stat-card animate-slide-up stagger-2 mt-6 flex items-center justify-between p-4" style="width: 40%;">
+          <div class="flex items-center gap-3">
+            <div style="background: rgba(251,146,60,0.1); color: #FB923C; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.3rem; flex-shrink: 0;">🔥</div>
+            <div>
+              <div style="font-size: 1rem; font-weight: 700; white-space: nowrap;" class="text-white">0 Day Streak</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;">Keep it going!</div>
+            </div>
           </div>
         </div>
 
-        <div class="rest-day-section glass-card no-hover animate-slide-up stagger-7">
-          <span style="font-size:1.3rem;">😌</span>
-          <div style="flex:1;">
-            <div style="font-weight:600;font-size:var(--text-sm);">${t('dashboard.restDay')}</div>
-            <div class="rest-day-info" id="rest-day-info"></div>
+        <div class="section-header mt-8 mb-4 flex justify-between items-center animate-slide-up stagger-3">
+          <h3 class="section-title" style="font-size: 0.8rem; letter-spacing: 1px; color: var(--text-secondary); text-transform: uppercase;">Today at a glance</h3>
+          <span style="font-size: 0.8rem; color: var(--text-secondary); cursor: pointer;" onclick="location.hash='#/reports'">View insights →</span>
+        </div>
+
+        <div class="stats-stack">
+          <!-- Steps Card -->
+          <div class="dashboard-stat-card flex items-center justify-between p-4 mb-3 animate-slide-up stagger-4" onclick="location.hash='#/movement'">
+            <div class="flex items-center gap-3">
+              <div style="background: rgba(163,230,53,0.1); color: #A3E635; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.3rem;">🏃</div>
+              <div class="flex flex-col">
+                <span style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">${t('dashboard.steps')}</span>
+                <span style="font-size: 1.2rem; font-weight: 700;" class="text-white" id="dash-steps">0 <span style="font-size:0.8rem; color:var(--text-secondary); font-weight:500;">steps</span></span>
+              </div>
+            </div>
+            <canvas id="trend-steps" class="mini-trend" width="80" height="30"></canvas>
           </div>
-          <button id="rest-day-btn" class="rest-day-toggle">${t('dashboard.markRestDay')}</button>
+
+          <!-- Sleep Card -->
+          <div class="dashboard-stat-card flex items-center justify-between p-4 mb-3 animate-slide-up stagger-5" onclick="location.hash='#/sleep'">
+            <div class="flex items-center gap-3">
+              <div style="background: rgba(167,139,250,0.1); color: #A78BFA; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.3rem;">🌙</div>
+              <div class="flex flex-col">
+                <span style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">${t('dashboard.sleepHours')}</span>
+                <span style="font-size: 1.2rem; font-weight: 700;" class="text-white" id="dash-sleep">-- <span style="font-size:0.8rem; color:var(--text-secondary); font-weight:500;">hours</span></span>
+              </div>
+            </div>
+            <span style="font-size: 0.9rem; font-weight: 600; color: #A78BFA; background: rgba(167,139,250,0.1); padding: 4px 10px; border-radius: 12px;">Good</span>
+          </div>
+
+          <!-- Meals Card -->
+          <div class="dashboard-stat-card flex items-center justify-between p-4 mb-3 animate-slide-up stagger-6" onclick="location.hash='#/nutrition'">
+            <div class="flex items-center gap-3">
+              <div style="background: rgba(163,230,53,0.1); color: #A3E635; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.3rem;">🥗</div>
+              <div class="flex flex-col">
+                <span style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">${t('dashboard.mealsLogged')}</span>
+                <span style="font-size: 1.2rem; font-weight: 700;" class="text-white" id="dash-meals">0 / 4</span>
+              </div>
+            </div>
+            <div class="flex gap-2" id="dash-meals-dots">
+               <div style="width:10px; height:10px; border-radius:50%; background:rgba(128,128,128,0.2);"></div>
+               <div style="width:10px; height:10px; border-radius:50%; background:rgba(128,128,128,0.2);"></div>
+               <div style="width:10px; height:10px; border-radius:50%; background:rgba(128,128,128,0.2);"></div>
+               <div style="width:10px; height:10px; border-radius:50%; background:rgba(128,128,128,0.2);"></div>
+            </div>
+          </div>
+
+          <!-- Mood Card -->
+          <div class="dashboard-stat-card flex items-center justify-between p-4 mb-3 animate-slide-up stagger-7" onclick="location.hash='#/mood'">
+            <div class="flex items-center gap-3">
+              <div style="background: rgba(251,191,36,0.1); color: #FBBF24; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.3rem;">😊</div>
+              <div class="flex flex-col">
+                <span style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">${t('dashboard.mood')}</span>
+                <span style="font-size: 1.2rem; font-weight: 700;" class="text-white" id="dash-mood">Calm</span>
+              </div>
+            </div>
+            <canvas id="trend-mood" class="mini-trend" width="80" height="30"></canvas>
+          </div>
+
+          <!-- Rest Day Card -->
+          <div class="dashboard-stat-card flex items-center justify-between p-4 mb-3 animate-slide-up stagger-8">
+            <div class="flex items-center gap-3">
+              <div style="background: rgba(251,146,60,0.1); color: #FB923C; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.3rem;">😌</div>
+              <div class="flex flex-col">
+                <span style="font-size: 1.1rem; font-weight: 700;" class="text-white">${t('dashboard.restDay')}</span>
+                <span style="font-size: 0.85rem; color: var(--text-secondary);" id="rest-day-info">5 rest days left this month</span>
+              </div>
+            </div>
+            <button id="rest-day-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">→</button>
+          </div>
+
+          <!-- Events Card -->
+          <div class="dashboard-stat-card flex items-center justify-between p-4 mb-3 animate-slide-up stagger-9" onclick="location.hash='#/events'">
+            <div class="flex items-center gap-3">
+              <div style="background: rgba(56,189,248,0.1); color: #38BDF8; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.3rem;">🎟️</div>
+              <div class="flex flex-col">
+                <span style="font-size: 1.1rem; font-weight: 700;" class="text-white">${t('dashboard.viewEvents')}</span>
+                <span style="font-size: 0.85rem; color: var(--text-secondary);">Join local fitness events</span>
+              </div>
+            </div>
+            <div style="color: var(--text-secondary); opacity: 0.5;">→</div>
+          </div>
         </div>
 
-        <div class="section-header mt-6 animate-slide-up stagger-8">
-          <h3 class="section-title">${t('dashboard.quickLog')}</h3>
-        </div>
-        <div class="quick-actions animate-slide-up stagger-8">
-          <button class="quick-action-btn" onclick="location.hash='#/movement'">
-            <span class="action-icon">🏃</span>
-            <span>${t('nav.movement')}</span>
-          </button>
-          <button class="quick-action-btn" onclick="location.hash='#/sleep'">
-            <span class="action-icon">😴</span>
-            <span>${t('nav.sleep')}</span>
-          </button>
-          <button class="quick-action-btn" onclick="location.hash='#/mood'">
-            <span class="action-icon">😊</span>
-            <span>${t('mood.title')}</span>
-          </button>
-          <button class="quick-action-btn" onclick="location.hash='#/events'">
-            <span class="action-icon">🏅</span>
-            <span>${t('dashboard.viewEvents')}</span>
-          </button>
-        </div>
-
-        <div class="flex gap-3 mt-6 animate-slide-up stagger-8">
-          <button class="btn btn-outline btn-block" onclick="location.hash='#/reports'">📊 ${t('dashboard.viewReports')}</button>
-        </div>
-      </div>`;
+      </div>
+    `;
   }
+
 
   async function mount() {
     const today = Helpers.getToday();
@@ -174,12 +198,27 @@ window.DashboardPage = (() => {
       if (nutrition.status === 'fulfilled') {
         const todayLog = nutrition.value.find(n => n.date === today);
         const el = document.getElementById('dash-meals');
+        const dotsContainer = document.getElementById('dash-meals-dots');
+        let count = 0;
+
         if (todayLog) {
-          const count = (todayLog.breakfast || 0) + (todayLog.lunch || 0) + (todayLog.snacks || 0) + (todayLog.dinner || 0);
+          count = (todayLog.breakfast || 0) + (todayLog.lunch || 0) + (todayLog.snacks || 0) + (todayLog.dinner || 0);
           el.textContent = `${count}/4`;
           hasNutrition = true;
         } else {
           el.textContent = '0/4';
+        }
+
+        if (dotsContainer) {
+          Array.from(dotsContainer.children).forEach((dot, index) => {
+            if (index < count) {
+              dot.style.background = '#A3E635';
+              dot.style.boxShadow = '0 0 8px rgba(163,230,53,0.5)';
+            } else {
+              dot.style.background = 'rgba(128,128,128,0.2)';
+              dot.style.boxShadow = 'none';
+            }
+          });
         }
       }
 
@@ -258,7 +297,10 @@ window.DashboardPage = (() => {
 
     if (info) info.textContent = `${data.restdays.remaining} ${t('dashboard.restDaysLeft')}`;
     if (btn) {
-      btn.textContent = isRest ? t('dashboard.unmarkRestDay') : t('dashboard.markRestDay');
+      btn.innerHTML = isRest ? '✓' : '→';
+      btn.style.background = isRest ? '#3ecf8e' : '#475569';
+      btn.style.color = isRest ? '#ffffff' : '#f8fafc';
+      btn.style.borderColor = isRest ? '#3ecf8e' : '#475569';
       btn.classList.toggle('active', isRest);
     }
   }

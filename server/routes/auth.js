@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const db = require('../db');
+const prisma = require('../prisma');
 const { authMiddleware, JWT_SECRET } = require('../middleware/auth');
 
 function calculateAge(dob) {
@@ -14,7 +14,7 @@ function calculateAge(dob) {
 }
 
 // POST /api/auth/signup
-router.post('/signup', (req, res) => {
+router.post('/signup', async (req, res) => {
   try {
     const { name, email, password, dob, gender, country } = req.body;
 
@@ -31,27 +31,27 @@ router.post('/signup', (req, res) => {
       return res.status(400).json({ error: 'Gender must be male or female.' });
     }
 
-    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+    const existing = await prisma.user.findFirst({ where: { email } });
     if (existing) {
       return res.status(409).json({ error: 'Email already registered.' });
     }
 
     const password_hash = bcrypt.hashSync(password, 10);
 
-    const result = db.prepare(
-      'INSERT INTO users (name, email, password_hash, dob, gender, country) VALUES (?, ?, ?, ?, ?, ?)'
-    ).run(name, email, password_hash, dob, gender, country);
+    const user = await prisma.user.create({
+      data: { name, email, password_hash, dob, gender, country }
+    });
 
-    const token = jwt.sign({ id: result.lastInsertRowid, email }, JWT_SECRET, { expiresIn: '30d' });
+    const token = jwt.sign({ id: user.id, email }, JWT_SECRET, { expiresIn: '30d' });
 
-    res.status(201).json({ token, user: { id: result.lastInsertRowid, name, email, age, gender, country } });
+    res.status(201).json({ token, user: { id: user.id, name, email, age, gender, country } });
   } catch (err) {
     res.status(500).json({ error: 'Server error during signup.' });
   }
 });
 
 // POST /api/auth/login
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -59,7 +59,7 @@ router.post('/login', (req, res) => {
       return res.status(400).json({ error: 'Email and password are required.' });
     }
 
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    const user = await prisma.user.findFirst({ where: { email } });
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
@@ -79,9 +79,12 @@ router.post('/login', (req, res) => {
 });
 
 // GET /api/auth/profile
-router.get('/profile', authMiddleware, (req, res) => {
+router.get('/profile', authMiddleware, async (req, res) => {
   try {
-    const user = db.prepare('SELECT id, name, email, dob, gender, country, language, activity_level, created_at FROM users WHERE id = ?').get(req.user.id);
+    const user = await prisma.user.findUnique({
+      where: { id: Number(req.user.id) },
+      select: { id: true, name: true, email: true, dob: true, gender: true, country: true, language: true, activity_level: true, created_at: true }
+    });
     if (!user) return res.status(404).json({ error: 'User not found.' });
 
     user.age = calculateAge(user.dob);
@@ -92,24 +95,24 @@ router.get('/profile', authMiddleware, (req, res) => {
 });
 
 // PUT /api/auth/profile
-router.put('/profile', authMiddleware, (req, res) => {
+router.put('/profile', authMiddleware, async (req, res) => {
   try {
     const { name, language, activity_level } = req.body;
-    const updates = [];
-    const values = [];
 
-    if (name) { updates.push('name = ?'); values.push(name); }
-    if (language) { updates.push('language = ?'); values.push(language); }
-    if (activity_level) { updates.push('activity_level = ?'); values.push(activity_level); }
-
-    if (updates.length === 0) {
+    if (!name && !language && !activity_level) {
       return res.status(400).json({ error: 'No fields to update.' });
     }
 
-    values.push(req.user.id);
-    db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+    const user = await prisma.user.update({
+      where: { id: Number(req.user.id) },
+      data: {
+        ...(name && { name }),
+        ...(language && { language }),
+        ...(activity_level && { activity_level }),
+      },
+      select: { id: true, name: true, email: true, dob: true, gender: true, language: true, activity_level: true, created_at: true }
+    });
 
-    const user = db.prepare('SELECT id, name, email, dob, gender, language, activity_level, created_at FROM users WHERE id = ?').get(req.user.id);
     user.age = calculateAge(user.dob);
 
     res.json(user);

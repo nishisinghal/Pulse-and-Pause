@@ -269,20 +269,35 @@
 }
 
 .profile-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: var(--space-3);
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+body[data-theme="light"] .profile-stat {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .profile-stat-value {
-  font-size: var(--text-xl);
-  font-weight: var(--weight-bold);
-  color: var(--primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
 }
 
 .profile-stat-label {
-  font-size: var(--text-xs);
-  color: var(--text-secondary);
-  margin-top: var(--space-1);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
 }
 
 .profile-settings {

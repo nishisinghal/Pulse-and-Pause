@@ -26,11 +26,11 @@ window.NutritionPage = (() => {
           ${mealData.map((m, i) => `
             <div class="meal-card animate-slide-up stagger-${i+1}" id="meal-${m.key}" data-meal="${m.key}">
               <span class="meal-icon">${m.icon}</span>
-              <div class="meal-info">
-                <div class="meal-name">${t('nutrition.' + m.key)}</div>
-                <div class="meal-status">${t('nutrition.skipped')}</div>
-                <input type="text" class="meal-note" id="note-${m.key}" placeholder="${t('nutrition.addNote')}" style="display:none;">
+              <div class="meal-card-info">
+                <div class="meal-card-name">${t('nutrition.' + m.key)}</div>
+                <div class="meal-card-status">${t('nutrition.skipped')}</div>
               </div>
+              <input type="text" class="meal-note" id="note-${m.key}" placeholder="${t('nutrition.addNote')}" style="display:none; width: 130px; margin-top: 0; text-align: right;">
               <div class="meal-check">✓</div>
             </div>
           `).join('')}
@@ -49,7 +49,7 @@ window.NutritionPage = (() => {
           </div>
         </div>
 
-        <button id="nut-save" class="btn btn-primary btn-block btn-lg mt-6 animate-slide-up stagger-6">${t('nutrition.logMeals')}</button>
+        <button id="nut-save" class="btn btn-block btn-lg mt-6 animate-slide-up stagger-6" style="background: #e8a838; color: #12141a; font-weight: 700; border: none; box-shadow: 0 4px 15px rgba(232,168,56,0.3);">${t('nutrition.logMeals')}</button>
 
         <div class="section-header mt-6 animate-slide-up stagger-7">
           <h3 class="section-title">${t('nutrition.weeklyConsistency')}</h3>
@@ -71,8 +71,8 @@ window.NutritionPage = (() => {
         if (e.target.classList.contains('meal-note')) return;
         const key = card.dataset.meal;
         meals[key] = meals[key] ? 0 : 1;
-        card.classList.toggle('eaten', meals[key]);
-        const status = card.querySelector('.meal-status');
+        card.classList.toggle('ate', meals[key]);
+        const status = card.querySelector('.meal-card-status');
         if (status) status.textContent = meals[key] ? I18n.t('nutrition.ate') : I18n.t('nutrition.skipped');
         const noteInput = card.querySelector('.meal-note');
         if (noteInput) noteInput.style.display = meals[key] ? 'block' : 'none';
@@ -111,8 +111,9 @@ window.NutritionPage = (() => {
           meals[key] = todayLog[key] ? 1 : 0;
           const card = document.getElementById(`meal-${key}`);
           if (card && meals[key]) {
-            card.classList.add('eaten');
-            card.querySelector('.meal-status').textContent = I18n.t('nutrition.ate');
+            card.classList.add('ate');
+            const status = card.querySelector('.meal-card-status');
+            if (status) status.textContent = I18n.t('nutrition.ate');
             const noteInput = card.querySelector('.meal-note');
             if (noteInput && todayLog[key + '_note']) {
               noteInput.value = todayLog[key + '_note'];
@@ -136,7 +137,7 @@ window.NutritionPage = (() => {
         const log = history.find(n => n.date === d);
         return log ? (log.breakfast + log.lunch + log.snacks + log.dinner) : 0;
       });
-      setTimeout(() => Charts.drawBarChart('nutrition-chart', labels, values, '#e8a838', 4), 100);
+      setTimeout(() => Charts.drawLineChart('nutrition-chart', labels, values, '#e8a838'), 100);
 
     } catch (err) { /* toast shown */ }
 

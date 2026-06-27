@@ -8,14 +8,21 @@
     "dev": "node server.js"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "axios": "^1.18.1",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^11.6.0",
     "canvas": "^3.2.3",
     "cheerio": "^1.2.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
+    "pg": "^8.22.0",
     "puppeteer": "^25.2.1"
+  },
+  "devDependencies": {
+    "prisma": "^7.8.0"
   }
 }

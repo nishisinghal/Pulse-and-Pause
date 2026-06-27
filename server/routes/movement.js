@@ -1,26 +1,45 @@
 const router = require('express').Router();
-const db = require('../db');
+const prisma = require('../prisma');
 const { authMiddleware } = require('../middleware/auth');
 
 router.use(authMiddleware);
 
 // POST /api/movement — log or update today's movement
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { steps = 0, active_minutes = 0, workout_type = '', workout_duration = 0 } = req.body;
     const date = new Date().toISOString().split('T')[0];
 
-    db.prepare(`
-      INSERT INTO movement_logs (user_id, date, steps, active_minutes, workout_type, workout_duration)
-      VALUES (?, ?, ?, ?, ?, ?)
-      ON CONFLICT(user_id, date) DO UPDATE SET
-        steps = movement_logs.steps + excluded.steps,
-        active_minutes = movement_logs.active_minutes + excluded.active_minutes,
-        workout_type = CASE WHEN excluded.workout_type != '' THEN excluded.workout_type ELSE movement_logs.workout_type END,
-        workout_duration = movement_logs.workout_duration + excluded.workout_duration
-    `).run(req.user.id, date, steps, active_minutes, workout_type, workout_duration);
+    const existing = await prisma.movementLog.findUnique({
+      where: { user_id_date: { user_id: Number(req.user.id), date } }
+    });
 
-    const log = db.prepare('SELECT * FROM movement_logs WHERE user_id = ? AND date = ?').get(req.user.id, date);
+    if (existing) {
+      await prisma.movementLog.update({
+        where: { id: existing.id },
+        data: {
+          steps: existing.steps + steps,
+          active_minutes: existing.active_minutes + active_minutes,
+          workout_type: workout_type !== '' ? workout_type : existing.workout_type,
+          workout_duration: existing.workout_duration + workout_duration
+        }
+      });
+    } else {
+      await prisma.movementLog.create({
+        data: {
+          user_id: Number(req.user.id),
+          date,
+          steps,
+          active_minutes,
+          workout_type,
+          workout_duration
+        }
+      });
+    }
+
+    const log = await prisma.movementLog.findUnique({
+      where: { user_id_date: { user_id: Number(req.user.id), date } }
+    });
     res.json(log);
   } catch (err) {
     res.status(500).json({ error: 'Failed to log movement.' });
@@ -28,7 +47,7 @@ router.post('/', (req, res) => {
 });
 
 // GET /api/movement?range=week|month
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const range = req.query.range || 'week';
     const days = range === 'month' ? 30 : 7;
@@ -36,9 +55,13 @@ router.get('/', (req, res) => {
     startDate.setDate(startDate.getDate() - days + 1);
     const start = startDate.toISOString().split('T')[0];
 
-    const logs = db.prepare(
-      'SELECT * FROM movement_logs WHERE user_id = ? AND date >= ? ORDER BY date ASC'
-    ).all(req.user.id, start);
+    const logs = await prisma.movementLog.findMany({
+      where: {
+        user_id: Number(req.user.id),
+        date: { gte: start }
+      },
+      orderBy: { date: 'asc' }
+    });
 
     res.json(logs);
   } catch (err) {

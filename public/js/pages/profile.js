@@ -120,17 +120,16 @@ window.ProfilePage = (() => {
 
     } catch (err) { /* toast shown */ }
 
-    // Language toggle
-    const langSetting = document.getElementById('setting-lang');
-    if (langSetting) {
-      langSetting.addEventListener('click', async () => {
+    // Language Toggle
+    const langBtn = document.getElementById('setting-lang');
+    if (langBtn) {
+      langBtn.addEventListener('click', async () => {
         const newLang = I18n.getLang() === 'en' ? 'hi' : 'en';
         await I18n.setLang(newLang);
         try { await API.auth.updateProfile({ language: newLang }); } catch(e) {}
-        // Re-render the page
-        if (window.App && window.App.rerender) window.App.rerender();
-        else window.location.hash = '#/profile';
+        window.App.navigate(window.location.hash);
       });
+      langBtn.style.cursor = 'pointer';
     }
 
     // Install App — direct install trigger (no instructions)

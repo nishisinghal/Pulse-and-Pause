@@ -1,19 +1,24 @@
 const router = require('express').Router();
-const db = require('../db');
+const prisma = require('../prisma');
 const { authMiddleware } = require('../middleware/auth');
 
 router.use(authMiddleware);
 
 // Get period logs for the last 12 months
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const logs = db.prepare(`
-      SELECT date, flow 
-      FROM period_logs 
-      WHERE user_id = ? 
-        AND date >= date('now', '-12 months')
-      ORDER BY date DESC
-    `).all(req.user.id);
+    const dateOffset = new Date();
+    dateOffset.setMonth(dateOffset.getMonth() - 12);
+    const startStr = dateOffset.toISOString().split('T')[0];
+
+    const logs = await prisma.periodLog.findMany({
+      where: {
+        user_id: Number(req.user.id),
+        date: { gte: startStr }
+      },
+      select: { date: true, flow: true },
+      orderBy: { date: 'desc' }
+    });
 
     res.json(logs);
   } catch (err) {
@@ -23,18 +28,27 @@ router.get('/', (req, res) => {
 });
 
 // Mark/Update a period date
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { date, flow } = req.body;
   if (!date || !['light', 'normal', 'heavy'].includes(flow)) {
     return res.status(400).json({ error: 'Invalid date or flow' });
   }
 
   try {
-    db.prepare(`
-      INSERT INTO period_logs (user_id, date, flow)
-      VALUES (?, ?, ?)
-      ON CONFLICT(user_id, date) DO UPDATE SET flow = excluded.flow
-    `).run(req.user.id, date, flow);
+    await prisma.periodLog.upsert({
+      where: {
+        user_id_date: {
+          user_id: Number(req.user.id),
+          date: date,
+        }
+      },
+      update: { flow },
+      create: {
+        user_id: Number(req.user.id),
+        date: date,
+        flow,
+      }
+    });
 
     res.json({ message: 'Saved successfully' });
   } catch (err) {
@@ -44,12 +58,14 @@ router.post('/', (req, res) => {
 });
 
 // Unmark a period date
-router.delete('/:date', (req, res) => {
+router.delete('/:date', async (req, res) => {
   try {
-    db.prepare(`
-      DELETE FROM period_logs 
-      WHERE user_id = ? AND date = ?
-    `).run(req.user.id, req.params.date);
+    await prisma.periodLog.deleteMany({
+      where: {
+        user_id: Number(req.user.id),
+        date: req.params.date,
+      }
+    });
 
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

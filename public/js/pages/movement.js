@@ -44,7 +44,7 @@ window.MovementPage = (() => {
                 `).join('')}
               </div>
             </div>
-            <button id="mv-save" class="btn btn-primary btn-block btn-lg">${t('movement.logMovement')}</button>
+            <button id="mv-save" class="btn btn-block btn-lg" style="background: #3ecf8e; color: #12141a; font-weight: 700; border: none; box-shadow: 0 4px 15px rgba(62,207,142,0.3);">${t('movement.logMovement')}</button>
           </div>
         </div>
 
@@ -95,7 +95,7 @@ window.MovementPage = (() => {
         return log ? log.steps : 0;
       });
 
-      setTimeout(() => Charts.drawBarChart('movement-chart', labels, values, '#3ecf8e'), 100);
+      setTimeout(() => Charts.drawLineChart('movement-chart', labels, values, '#3ecf8e'), 100);
 
     } catch (err) { /* toast shown */ }
 
@@ -130,7 +130,7 @@ window.MovementPage = (() => {
           const log = updatedHistory.find(m => m.date === d);
           return log ? log.steps : 0;
         });
-        Charts.drawBarChart('movement-chart', labels, values, '#3ecf8e');
+        Charts.drawLineChart('movement-chart', labels, values, '#3ecf8e');
 
       } catch (err) { /* toast shown */ }
     });

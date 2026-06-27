@@ -1,27 +1,28 @@
 const router = require('express').Router();
-const db = require('../db');
+const prisma = require('../prisma');
 const { authMiddleware } = require('../middleware/auth');
 
 router.use(authMiddleware);
 
 // GET /api/streaks
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = Number(req.user.id);
     const today = new Date();
 
     // Get dates that have ALL 4 logs OR are marked as rest days
-    const loggedDates = db.prepare(`
+    const loggedDatesRaw = await prisma.$queryRaw`
       SELECT DISTINCT date FROM (
-        SELECT date FROM movement_logs WHERE user_id = ?
-        INTERSECT SELECT date FROM sleep_logs WHERE user_id = ?
-        INTERSECT SELECT date FROM nutrition_logs WHERE user_id = ?
-        INTERSECT SELECT date FROM mood_logs WHERE user_id = ?
+        SELECT date FROM movement_logs WHERE user_id = ${userId}
+        INTERSECT SELECT date FROM sleep_logs WHERE user_id = ${userId}
+        INTERSECT SELECT date FROM nutrition_logs WHERE user_id = ${userId}
+        INTERSECT SELECT date FROM mood_logs WHERE user_id = ${userId}
       )
       UNION
-      SELECT date FROM rest_days WHERE user_id = ?
+      SELECT date FROM rest_days WHERE user_id = ${userId}
       ORDER BY date DESC
-    `).all(userId, userId, userId, userId, userId).map(r => r.date);
+    `;
+    const loggedDates = loggedDatesRaw.map(r => r.date);
 
     const dateSet = new Set(loggedDates);
 

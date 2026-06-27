@@ -60,11 +60,21 @@ window.Charts = (() => {
         // Bar gradient
         const grad = ctx.createLinearGradient(x, y, x, padding.top + chartH);
         grad.addColorStop(0, color);
-        grad.addColorStop(1, color + '40');
+        grad.addColorStop(1, color + '10');
+        
         ctx.fillStyle = grad;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 16;
+        ctx.shadowOffsetY = 4;
+        
         ctx.beginPath();
-        ctx.roundRect(x, y, barWidth, barH, [4, 4, 0, 0]);
+        ctx.roundRect(x, y, barWidth, barH, [8, 8, 8, 8]);
         ctx.fill();
+        
+        // Reset shadow for text
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
 
         // Value on top
         if (values[i] > 0) {

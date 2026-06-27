@@ -1,11 +1,11 @@
 const router = require('express').Router();
-const db = require('../db');
+const prisma = require('../prisma');
 const { authMiddleware } = require('../middleware/auth');
 
 router.use(authMiddleware);
 
 // POST /api/mood
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { mood, note = '' } = req.body;
     const date = new Date().toISOString().split('T')[0];
@@ -14,14 +14,22 @@ router.post('/', (req, res) => {
       return res.status(400).json({ error: 'Invalid mood value.' });
     }
 
-    db.prepare(`
-      INSERT INTO mood_logs (user_id, date, mood, note)
-      VALUES (?, ?, ?, ?)
-      ON CONFLICT(user_id, date) DO UPDATE SET
-        mood = excluded.mood, note = excluded.note
-    `).run(req.user.id, date, mood, note);
+    const log = await prisma.moodLog.upsert({
+      where: {
+        user_id_date: {
+          user_id: Number(req.user.id),
+          date: date,
+        }
+      },
+      update: { mood, note },
+      create: {
+        user_id: Number(req.user.id),
+        date: date,
+        mood,
+        note,
+      }
+    });
 
-    const log = db.prepare('SELECT * FROM mood_logs WHERE user_id = ? AND date = ?').get(req.user.id, date);
     res.json(log);
   } catch (err) {
     res.status(500).json({ error: 'Failed to log mood.' });
@@ -29,7 +37,7 @@ router.post('/', (req, res) => {
 });
 
 // GET /api/mood?range=week|month
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const range = req.query.range || 'week';
     const days = range === 'month' ? 30 : 7;
@@ -37,9 +45,13 @@ router.get('/', (req, res) => {
     startDate.setDate(startDate.getDate() - days + 1);
     const start = startDate.toISOString().split('T')[0];
 
-    const logs = db.prepare(
-      'SELECT * FROM mood_logs WHERE user_id = ? AND date >= ? ORDER BY date ASC'
-    ).all(req.user.id, start);
+    const logs = await prisma.moodLog.findMany({
+      where: {
+        user_id: Number(req.user.id),
+        date: { gte: start }
+      },
+      orderBy: { date: 'asc' }
+    });
 
     res.json(logs);
   } catch (err) {
