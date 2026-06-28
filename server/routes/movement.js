@@ -7,7 +7,7 @@ router.use(authMiddleware);
 // POST /api/movement — log or update today's movement
 router.post('/', async (req, res) => {
   try {
-    const { steps = 0, active_minutes = 0, workout_type = '', workout_duration = 0 } = req.body;
+    const { steps = 0, distance_km = 0, workout_type = '', workout_duration = 0 } = req.body;
     const date = req.body.date || new Date().toISOString().split('T')[0];
 
     const existing = await prisma.movementLog.findUnique({
@@ -18,10 +18,10 @@ router.post('/', async (req, res) => {
       await prisma.movementLog.update({
         where: { id: existing.id },
         data: {
-          steps: existing.steps + steps,
-          active_minutes: existing.active_minutes + active_minutes,
+          steps: existing.steps + Number(steps),
+          distance_km: existing.distance_km + Number(distance_km),
           workout_type: workout_type !== '' ? workout_type : existing.workout_type,
-          workout_duration: existing.workout_duration + workout_duration
+          workout_duration: existing.workout_duration + Number(workout_duration)
         }
       });
     } else {
@@ -29,10 +29,10 @@ router.post('/', async (req, res) => {
         data: {
           user_id: Number(req.user.id),
           date,
-          steps,
-          active_minutes,
+          steps: Number(steps),
+          distance_km: Number(distance_km),
           workout_type,
-          workout_duration
+          workout_duration: Number(workout_duration)
         }
       });
     }

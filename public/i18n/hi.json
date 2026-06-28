@@ -65,7 +65,7 @@
   "movement": {
     "title": "गतिविधि ट्रैकर",
     "steps": "कदम",
-    "activeMinutes": "सक्रिय मिनट",
+    "distanceKm": "दूरी (किमी)",
     "workoutType": "व्यायाम का प्रकार",
     "duration": "अवधि (मिनट)",
     "logMovement": "गतिविधि सहेजें",
@@ -79,7 +79,7 @@
     "cycling": "🚴 साइकिल",
     "noWorkout": "कोई नहीं",
     "stepsPlaceholder": "कदम संख्या दर्ज करें",
-    "minutesPlaceholder": "सक्रिय मिनट",
+    "distancePlaceholder": "किमी में दूरी",
     "durationPlaceholder": "व्यायाम अवधि"
   },
   "sleep": {

@@ -28,8 +28,8 @@ window.MovementPage = (() => {
             </div>
             <div class="input-row">
               <div class="form-group">
-                <label class="form-label">${t('movement.activeMinutes')}</label>
-                <input type="number" id="mv-active" class="input" placeholder="${t('movement.minutesPlaceholder')}" min="0" max="1440">
+                <label class="form-label">${t('movement.distanceKm')}</label>
+                <input type="number" id="mv-distance" class="input" placeholder="${t('movement.distancePlaceholder')}" min="0" max="100" step="0.1">
               </div>
               <div class="form-group">
                 <label class="form-label">${t('movement.duration')}</label>
@@ -77,7 +77,7 @@ window.MovementPage = (() => {
 
       if (todayLog) {
         document.getElementById('mv-steps').value = todayLog.steps || '';
-        document.getElementById('mv-active').value = todayLog.active_minutes || '';
+        document.getElementById('mv-distance').value = todayLog.distance_km || '';
         document.getElementById('mv-duration').value = todayLog.workout_duration || '';
         if (todayLog.workout_type) {
           selectedWorkout = todayLog.workout_type;
@@ -111,12 +111,17 @@ window.MovementPage = (() => {
       }
 
       try {
-        await API.movement.log({ steps, active_minutes, workout_type: selectedWorkout, workout_duration });
+        await API.movement.log({
+          steps: steps ? Number(steps) : 0,
+          distance_km: distance_km ? Number(distance_km) : 0,
+          workout_type: selectedWorkout,
+          workout_duration: duration ? Number(duration) : 0
+        });
         Helpers.showToast(I18n.t('common.success'), 'success');
 
         // Clear form after save
         document.getElementById('mv-steps').value = '';
-        document.getElementById('mv-active').value = '';
+        document.getElementById('mv-distance').value = '';
         document.getElementById('mv-duration').value = '';
         selectedWorkout = '';
         document.querySelectorAll('#workout-chips .workout-chip').forEach(c => c.classList.remove('selected'));

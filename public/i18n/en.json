@@ -65,7 +65,7 @@
   "movement": {
     "title": "Movement Tracker",
     "steps": "Steps",
-    "activeMinutes": "Active Minutes",
+    "distanceKm": "Distance (km)",
     "workoutType": "Workout Type",
     "duration": "Duration (min)",
     "logMovement": "Save Movement",
@@ -79,7 +79,7 @@
     "cycling": "🚴 Cycling",
     "noWorkout": "None",
     "stepsPlaceholder": "Enter steps count",
-    "minutesPlaceholder": "Minutes active",
+    "distancePlaceholder": "Distance in km",
     "durationPlaceholder": "Workout duration"
   },
   "sleep": {

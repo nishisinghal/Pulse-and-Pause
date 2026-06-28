@@ -35,7 +35,7 @@ model MovementLog {
   user_id          Int
   date             String
   steps            Int      @default(0)
-  active_minutes   Int      @default(0)
+  distance_km      Float    @default(0)
   workout_type     String?
   workout_duration Int      @default(0)
 
