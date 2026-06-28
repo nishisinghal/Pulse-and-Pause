@@ -12,7 +12,7 @@ router.post('/', async (req, res) => {
       breakfast_note = '', lunch_note = '', snacks_note = '', dinner_note = '',
       water_glasses = 0
     } = req.body;
-    const date = new Date().toISOString().split('T')[0];
+    const date = req.body.date || new Date().toISOString().split('T')[0];
 
     const log = await prisma.nutritionLog.upsert({
       where: {

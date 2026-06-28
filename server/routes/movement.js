@@ -8,7 +8,7 @@ router.use(authMiddleware);
 router.post('/', async (req, res) => {
   try {
     const { steps = 0, active_minutes = 0, workout_type = '', workout_duration = 0 } = req.body;
-    const date = new Date().toISOString().split('T')[0];
+    const date = req.body.date || new Date().toISOString().split('T')[0];
 
     const existing = await prisma.movementLog.findUnique({
       where: { user_id_date: { user_id: Number(req.user.id), date } }

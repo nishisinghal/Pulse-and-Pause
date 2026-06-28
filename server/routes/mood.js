@@ -8,7 +8,7 @@ router.use(authMiddleware);
 router.post('/', async (req, res) => {
   try {
     const { mood, note = '' } = req.body;
-    const date = new Date().toISOString().split('T')[0];
+    const date = req.body.date || new Date().toISOString().split('T')[0];
 
     if (!['great', 'good', 'okay', 'low', 'bad'].includes(mood)) {
       return res.status(400).json({ error: 'Invalid mood value.' });

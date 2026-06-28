@@ -31,7 +31,12 @@ window.API = (() => {
   }
 
   function get(url) { return request(url); }
-  function post(url, data) { return request(url, { method: 'POST', body: JSON.stringify(data) }); }
+  function post(url, data) { 
+    if (data && typeof data === 'object' && !data.date) {
+      data.date = Helpers.getToday();
+    }
+    return request(url, { method: 'POST', body: JSON.stringify(data) }); 
+  }
   function put(url, data) { return request(url, { method: 'PUT', body: JSON.stringify(data) }); }
   function del(url) { return request(url, { method: 'DELETE' }); }
 

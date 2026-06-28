@@ -18,7 +18,7 @@ function calcDuration(bedtime, wakeTime) {
 router.post('/', async (req, res) => {
   try {
     const { bedtime, wake_time, quality = 3 } = req.body;
-    const date = new Date().toISOString().split('T')[0];
+    const date = req.body.date || new Date().toISOString().split('T')[0];
     const duration_hours = calcDuration(bedtime, wake_time);
 
     const log = await prisma.sleepLog.upsert({

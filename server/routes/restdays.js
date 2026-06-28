@@ -11,7 +11,7 @@ function getQuota(gender) {
 // POST /api/restdays — mark today as rest day
 router.post('/', async (req, res) => {
   try {
-    const date = new Date().toISOString().split('T')[0];
+    const date = req.body.date || new Date().toISOString().split('T')[0];
     const month = date.substring(0, 7); // YYYY-MM
 
     const user = await prisma.user.findUnique({
