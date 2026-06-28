@@ -113,9 +113,9 @@ window.MovementPage = (() => {
       try {
         await API.movement.log({
           steps: steps ? Number(steps) : 0,
-          distance_km: distance_km ? Number(distance_km) : 0,
+          distance_km: distance ? Number(distance) : 0,
           workout_type: selectedWorkout,
-          workout_duration: duration ? Number(duration) : 0
+          workout_duration: workout_duration ? Number(workout_duration) : 0
         });
         Helpers.showToast(I18n.t('common.success'), 'success');
 

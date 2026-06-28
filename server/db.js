@@ -27,7 +27,7 @@ db.exec(`
     user_id INTEGER NOT NULL REFERENCES users(id),
     date TEXT NOT NULL,
     steps INTEGER DEFAULT 0,
-    active_minutes INTEGER DEFAULT 0,
+    distance_km REAL DEFAULT 0,
     workout_type TEXT,
     workout_duration INTEGER DEFAULT 0,
     UNIQUE(user_id, date)
