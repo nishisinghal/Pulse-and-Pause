@@ -25,7 +25,7 @@ window.DashboardPage = (() => {
           <div class="flex items-center gap-3">
             <div style="background: rgba(251,146,60,0.1); color: #FB923C; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.3rem; flex-shrink: 0;">🔥</div>
             <div>
-              <div style="font-size: 1rem; font-weight: 700; white-space: nowrap;" class="text-white">0 Day Streak</div>
+              <div style="font-size: 1rem; font-weight: 700; white-space: nowrap;" class="text-white"><span id="dash-streak-count">0</span> Day Streak</div>
               <div style="font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;">Keep it going!</div>
             </div>
           </div>
@@ -251,8 +251,8 @@ window.DashboardPage = (() => {
       // Streak
       if (streak.status === 'fulfilled') {
         data.streak = streak.value;
-        const el = document.getElementById('streak-display');
-        if (el) el.innerHTML = Streaks.renderStreakBadge(data.streak.current_streak);
+        const el = document.getElementById('dash-streak-count');
+        if (el) el.textContent = data.streak.current_streak;
       }
 
       // Rest days
