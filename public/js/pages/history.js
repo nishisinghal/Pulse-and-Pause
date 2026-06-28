@@ -116,8 +116,8 @@ window.HistoryPage = (() => {
                 <div class="hist-stat-lbl">${t('movement.steps')}</div>
               </div>
               <div class="hist-stat">
-                <div class="hist-stat-val">${log.active_minutes || 0}</div>
-                <div class="hist-stat-lbl">${t('movement.activeMinutes')}</div>
+                <div class="hist-stat-val">${log.distance_km || 0}</div>
+                <div class="hist-stat-lbl">${t('movement.distanceKm')}</div>
               </div>
               <div class="hist-stat">
                 <div class="hist-stat-val">${log.workout_duration || 0}<span class="text-xs">m</span></div>

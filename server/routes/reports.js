@@ -18,14 +18,14 @@ router.get('/', async (req, res) => {
     const movementAgg = await prisma.movementLog.aggregate({
       where: { user_id: userId, date: { gte: start } },
       _count: { _all: true },
-      _avg: { steps: true, active_minutes: true },
+      _avg: { steps: true, distance_km: true },
       _max: { steps: true }
     });
 
     const movement = {
       logged_days: movementAgg._count._all || 0,
       avg_steps: movementAgg._avg.steps || 0,
-      avg_active_minutes: movementAgg._avg.active_minutes || 0,
+      avg_distance_km: movementAgg._avg.distance_km || 0,
       max_steps: movementAgg._max.steps || 0
     };
 
@@ -119,7 +119,7 @@ router.get('/', async (req, res) => {
       movement: {
         logged_days: movement.logged_days,
         avg_steps: Math.round(movement.avg_steps),
-        avg_active_minutes: Math.round(movement.avg_active_minutes),
+        avg_distance_km: Math.round(movement.avg_distance_km),
         max_steps: movement.max_steps
       },
       sleep: {

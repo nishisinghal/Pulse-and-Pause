@@ -102,10 +102,10 @@ window.MovementPage = (() => {
     // Save button
     document.getElementById('mv-save').addEventListener('click', async () => {
       const steps = parseInt(document.getElementById('mv-steps').value) || 0;
-      const active_minutes = parseInt(document.getElementById('mv-active').value) || 0;
+      const distance = parseFloat(document.getElementById('mv-distance').value) || 0;
       const workout_duration = parseInt(document.getElementById('mv-duration').value) || 0;
 
-      if (steps === 0 && active_minutes === 0 && workout_duration === 0) {
+      if (steps === 0 && distance === 0 && workout_duration === 0) {
         Helpers.showToast('Please enter some activity data', 'error');
         return;
       }
