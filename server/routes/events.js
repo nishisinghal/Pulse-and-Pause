@@ -34,7 +34,7 @@ const SMART_EVENTS = [
     category: 'yoga',
     location: 'Juhu Beach, Mumbai',
     type: 'Wellness',
-    url: 'https://www.meetup.com/',
+    url: 'https://www.meetup.com/mumbai-yoga-club/events/',
     city: 'mumbai',
     daysAhead: 2
   },
@@ -45,7 +45,7 @@ const SMART_EVENTS = [
     category: 'campus',
     location: 'IIT Bombay Campus, Powai, Mumbai',
     type: 'Sports',
-    url: 'https://www.iitb.ac.in/',
+    url: 'https://www.iitb.ac.in/sports/aavhan/',
     city: 'mumbai',
     daysAhead: 10
   },
@@ -69,7 +69,7 @@ const SMART_EVENTS = [
     category: 'yoga',
     location: 'Lodhi Garden, Delhi',
     type: 'Wellness',
-    url: 'https://www.meetup.com/',
+    url: 'https://www.meetup.com/delhi-weekend-yoga/events/',
     city: 'delhi',
     daysAhead: 3
   },
@@ -80,7 +80,7 @@ const SMART_EVENTS = [
     category: 'campus',
     location: 'North Campus, Delhi University',
     type: 'Sports',
-    url: 'http://www.du.ac.in/',
+    url: 'http://www.du.ac.in/sports/athletics-meet',
     city: 'delhi',
     daysAhead: 8
   },
@@ -104,7 +104,7 @@ const SMART_EVENTS = [
     category: 'sports',
     location: 'Cubbon Park, Bangalore',
     type: 'Cycling',
-    url: 'https://www.meetup.com/',
+    url: 'https://www.meetup.com/bangalore-cycling-club/events/',
     city: 'bangalore',
     daysAhead: 5
   },
@@ -128,7 +128,7 @@ const SMART_EVENTS = [
     category: 'campus',
     location: 'Symbiosis Campus, Pune',
     type: 'Sports',
-    url: 'https://siu.edu.in/',
+    url: 'https://siu.edu.in/sports-council/',
     city: 'pune',
     daysAhead: 12
   },
@@ -141,7 +141,7 @@ const SMART_EVENTS = [
     category: 'yoga',
     location: 'Assi Ghat, Varanasi',
     type: 'Wellness',
-    url: 'https://uptourism.gov.in/',
+    url: 'https://uptourism.gov.in/en/page/yoga-in-varanasi',
     city: 'varanasi',
     daysAhead: 1
   }
