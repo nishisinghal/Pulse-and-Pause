@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  swasthya-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      # Use your external Supabase DB directly from your .env
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    env_file:
+      - .env
+    volumes:
+      - ./server:/app/server
+      - ./public:/app/public
+      # Allows hot-reloading if you use nodemon or restart container manually
+    restart: unless-stopped
