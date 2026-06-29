@@ -6,7 +6,6 @@ const path = require('path');
 require('./server/db');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -32,6 +31,12 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`🏥 Pulse & Pause server running at http://localhost:${PORT}`);
-});
+// Only start listening when run directly (not during tests)
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🏥 Pulse & Pause server running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

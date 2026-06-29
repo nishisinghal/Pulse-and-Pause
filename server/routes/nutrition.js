@@ -14,6 +14,10 @@ router.post('/', async (req, res) => {
     } = req.body;
     const date = req.body.date || new Date().toISOString().split('T')[0];
 
+    if (Number(water_glasses) < 0 || Number(water_glasses) > 30) {
+      return res.status(400).json({ error: 'Water glasses must be between 0 and 30.' });
+    }
+
     const log = await prisma.nutritionLog.upsert({
       where: {
         user_id_date: {

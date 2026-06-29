@@ -23,9 +23,13 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ error: 'All fields are required.' });
     }
 
-    const age = calculateAge(dob);
-    if (age < 13 || age > 30) {
-      return res.status(400).json({ error: 'Age must be between 13 and 30 years.' });
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format.' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters.' });
     }
 
     if (!['male', 'female'].includes(gender)) {
@@ -44,6 +48,7 @@ router.post('/signup', async (req, res) => {
     });
 
     const token = jwt.sign({ id: user.id, email }, JWT_SECRET, { expiresIn: '30d' });
+    const age = calculateAge(dob);
 
     res.status(201).json({ token, user: { id: user.id, name, email, age, gender, country } });
   } catch (err) {

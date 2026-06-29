@@ -10,6 +10,16 @@ router.post('/', async (req, res) => {
     const { steps = 0, distance_km = 0, workout_type = '', workout_duration = 0 } = req.body;
     const date = req.body.date || new Date().toISOString().split('T')[0];
 
+    if (Number(steps) < 0 || Number(steps) > 100000) {
+      return res.status(400).json({ error: 'Steps must be between 0 and 100,000.' });
+    }
+    if (Number(distance_km) < 0 || Number(distance_km) > 200) {
+      return res.status(400).json({ error: 'Distance must be between 0 and 200 km.' });
+    }
+    if (Number(workout_duration) < 0 || Number(workout_duration) > 1440) {
+      return res.status(400).json({ error: 'Workout duration must be between 0 and 1440 minutes.' });
+    }
+
     const existing = await prisma.movementLog.findUnique({
       where: { user_id_date: { user_id: Number(req.user.id), date } }
     });

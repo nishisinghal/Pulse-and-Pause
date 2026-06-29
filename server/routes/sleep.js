@@ -19,6 +19,11 @@ router.post('/', async (req, res) => {
   try {
     const { bedtime, wake_time, quality = 3 } = req.body;
     const date = req.body.date || new Date().toISOString().split('T')[0];
+
+    if (quality !== null && quality !== undefined && (Number(quality) < 1 || Number(quality) > 5)) {
+      return res.status(400).json({ error: 'Sleep quality must be between 1 and 5.' });
+    }
+
     const duration_hours = calcDuration(bedtime, wake_time);
 
     const log = await prisma.sleepLog.upsert({
